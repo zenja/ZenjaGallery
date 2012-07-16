@@ -53,7 +53,7 @@ body {
 
 #collections {
 	width: 350px;
-	height: 100%;
+	overflow: hidden;
 }
 
 .photoset-title-div {
@@ -90,11 +90,13 @@ body {
 	margin: 10px 0 0 10px;
 }
 
-.thumb-small {
+img.thumb-small {
 	width: 75px;
 	height: 75px;
+	display: inline;
 	margin: 1px 2px 1px 2px;
 	opacity: 0.5;
+	text-align: left;
 }
 
 img.loading-icon {

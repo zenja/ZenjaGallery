@@ -1,9 +1,11 @@
+var mouse_y = 0;
 
 $(document).ready(function() {
 	/* 
 	 * Add photosets-div DOMs, 
 	 * and associate the id to it using jQuery data() func, 
-	 * and set the background color.
+	 * and set the background color, 
+	 * and set the height of the photosets area
 	 * 
 	 * DOM structure:
 	 * 
@@ -63,7 +65,6 @@ $(document).ready(function() {
 			photoset_div.data('index', index);
 			photoset_div.data('photoset_id', node.id);
 			thumbs_area_div.data('is_loaded', false);
-			thumbs_area_div.data('test', 7); //debug
 			
 			/* TODO: add effects to the photoset div */
 			photoset_div.slideDown();
@@ -83,6 +84,12 @@ $(document).ready(function() {
 		/* Add class .active to the first photosets title div */
 		//$('#collections .photoset-title-div:first').addClass('active');
 		activatePhotoset($('#collections .photoset:first'));
+		
+		/* Set height of photosets area when resize */
+		collections_wrapper.css({ "height": $(document).height() - 10 });
+		$(window).resize(function(){
+			collections_wrapper.css({ "height": $(window).height() - 10 });
+		});
 	});
 	
 	/* 
@@ -115,6 +122,14 @@ $(document).ready(function() {
 			activatePhotoset($(this).parent()));	
 	});
 	
+});
+
+/* 
+ * Record the y position of the mouse
+ * 
+ *  */
+$(document).mousemove(function(e){
+	mouse_y = e.pageY;
 });
 
 /*
@@ -160,12 +175,14 @@ function activatePhotoset(div) {
 					{
 						class: 'thumb-small', 
 						src: node.url_sq, 
+						style: 'display: inline;', 
 						alt: node.title
 					});
 				the_img.data('photo_id', node.id);
 				the_img.hide(); // hide fot the coming animation
 				the_img.appendTo(the_thumbs_area);
-				the_img.fadeIn('slow');
+				// show the img with fade-in effect when loaded
+				the_img.bind("load", function () { $(this).fadeIn('slow'); });
 				
 				/* remove the darkness of photoset-title-div, 
 				 * hide the loading icon */
