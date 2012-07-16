@@ -11,6 +11,7 @@ $(document).ready(function() {
 	 *   |-- div class="photoset-title-div"
 	 *     |-- p class="photoset-title"
 	 *     |-- p class="photoset-description"
+	 *     |-- img class="loading-icon" alt="loading" src="images/loading.gif"
 	 *   |-- div class="thumbs-area" (data: is_loaded)
 	 * 
 	 * The father DOM is div #collections.
@@ -36,6 +37,12 @@ $(document).ready(function() {
 							{
 								class: 'photoset-description'
 							});
+			var img_loading_icon = $('<img>', 
+							{
+								class: 'loading-icon', 
+								alt: 'loading', 
+								src: 'images/loading.gif'
+							});
 			var thumbs_area_div = $('<div>', 
 							{
 								class: 'thumbs-area'
@@ -46,6 +53,7 @@ $(document).ready(function() {
 			/* insert the elements to proper positions */
 			p_title.appendTo(the_title_div);
 			p_description.appendTo(the_title_div);
+			img_loading_icon.appendTo(the_title_div);
 			the_title_div.appendTo(photoset_div);
 			photoset_div.hide();
 			thumbs_area_div.appendTo(photoset_div);
@@ -125,19 +133,25 @@ $(document).ready(function() {
  * 
  * */
 function activatePhotoset(div) {
-	/* clear the 'style' attribute */
-	div.find('.photoset-title-div').attr('style', '');
+	var photoset_title_div = div.find('.photoset-title-div');
 	
+	/* clear the 'style' attribute */
+	photoset_title_div.attr('style', '');
 	/* add class .active */
-	div.find('.photoset-title-div').addClass('active');
+	photoset_title_div.addClass('active');
 	
 	/* load DOMs if haven't done yet */
 	var the_thumbs_area = div.find('.thumbs-area');
 	if (the_thumbs_area.data('is_loaded') != true) {
-		//alert('not loaded yet')
+		/* fade the photoset-title-div to dark,
+		 * show the loading img, 
+		 * until all the DOMs loaded */
+		photoset_title_div.fadeTo(100, 0.3);
+		photoset_title_div.find('.loading-icon').show();
+		
+		
 		/* build imgs, add DOMs, with effects */
 		var the_photoset_id = div.data('photoset_id');
-		//alert("the photoset id: " + the_photoset_id);
 		$.getJSON('/service/photos_in_set?set_id=' + the_photoset_id, function(data) {
 			//alert("JSON loaded");
 			$.each(data, function(index, node) {
@@ -152,6 +166,11 @@ function activatePhotoset(div) {
 				the_img.hide(); // hide fot the coming animation
 				the_img.appendTo(the_thumbs_area);
 				the_img.fadeIn('slow');
+				
+				/* remove the darkness of photoset-title-div, 
+				 * hide the loading icon */
+				photoset_title_div.fadeTo(100, 1.0);
+				photoset_title_div.find('.loading-icon').hide();
 			});
 		});
 		

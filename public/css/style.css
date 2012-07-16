@@ -57,9 +57,11 @@ body {
 }
 
 .photoset-title-div {
+	position: relative;
 	display: block;
 	width: 312px;
 	height: 80px;
+	overflow: hidden;
 	margin: 1px 2px 1px 2px;
 	background-color: #004299;
 	opacity: 0.5;
@@ -71,8 +73,6 @@ body {
 }
 
 .photoset-title {
-	float: left;
-	clear: right;
 	font-size: 30px;
 	color: #FFF;
 	height: 30px;
@@ -82,8 +82,6 @@ body {
 }
 
 .photoset-description {
-	float: left;
-	clear: right;
 	font-size: 12px;
 	color: #EEE;
 	height: 12px;
@@ -97,4 +95,13 @@ body {
 	height: 75px;
 	margin: 1px 2px 1px 2px;
 	opacity: 0.5;
+}
+
+img.loading-icon {
+	position: absolute;
+	width: 35px;
+	height: 35px;
+	top: 25px;
+	left: 130px;
+	display: none;
 }
