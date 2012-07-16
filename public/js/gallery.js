@@ -1,11 +1,13 @@
-var mouse_y = 0;
+var scroll_timer;
+var scroll_amount = 0;
 
 $(document).ready(function() {
 	/* 
 	 * Add photosets-div DOMs, 
 	 * and associate the id to it using jQuery data() func, 
 	 * and set the background color, 
-	 * and set the height of the photosets area
+	 * and set the height of the photosets area, 
+	 * and add the scroll effect to the sidebar area
 	 * 
 	 * DOM structure:
 	 * 
@@ -23,32 +25,26 @@ $(document).ready(function() {
 	$.getJSON("/service/photosets", function(data) {
 		$.each(data, function(index, node) {
 			/* bulid elements */
-			var photoset_div = $('<div>', 
-							{
-								class: 'photoset'
-							});
-			var the_title_div = $('<div>', 
-							{
-								class: 'photoset-title-div'
-							});
-			var p_title = $('<p>', 
-							{
-								class: 'photoset-title'
-							});
-			var p_description = $('<p>', 
-							{
-								class: 'photoset-description'
-							});
-			var img_loading_icon = $('<img>', 
-							{
-								class: 'loading-icon', 
-								alt: 'loading', 
-								src: 'images/loading.gif'
-							});
-			var thumbs_area_div = $('<div>', 
-							{
-								class: 'thumbs-area'
-							});
+			var photoset_div = $('<div>', {
+				class: 'photoset'
+			});
+			var the_title_div = $('<div>', {
+				class: 'photoset-title-div'
+			});
+			var p_title = $('<p>', {
+				class: 'photoset-title'
+			});
+			var p_description = $('<p>', {
+				class: 'photoset-description'
+			});
+			var img_loading_icon = $('<img>', {
+				class: 'loading-icon', 
+				alt: 'loading', 
+				src: 'images/loading.gif'
+			});
+			var thumbs_area_div = $('<div>', {
+				class: 'thumbs-area'
+			});
 			/* set text of title and description */
 			p_title.text(node.title);
 			p_description.text(node.description);
@@ -85,12 +81,60 @@ $(document).ready(function() {
 		//$('#collections .photoset-title-div:first').addClass('active');
 		activatePhotoset($('#collections .photoset:first'));
 		
-		/* Set height of photosets area when resize */
-		collections_wrapper.css({ "height": $(document).height() - 10 });
+		/* Set height of sidebar when resize */
+		var sidebar = $('#sidebar');
+		sidebar.css({ "height": $(window).height() });
 		$(window).resize(function(){
-			collections_wrapper.css({ "height": $(window).height() - 10 });
+			sidebar.css({ "height": $(window).height() });
+		});
+		
+			
+		/* Set scroll effect */
+		sidebar.mouseenter(function(e) {
+			// set on the timer
+			scroll_timer = setInterval(scroll_timer_func, 30);
+		});
+		sidebar.mouseleave(function(e) {
+			// set off the timer
+			clearInterval(scroll_timer);
+		});
+		sidebar.mousemove(function(e) {
+			my_debug(1, "(" + e.pageX + ", " + e.pageY + ")");
+			my_debug(2, "window.height: " + $(window).height());
+			my_debug(3, "document.height: " + $(document).height());
+			
+			var delta = e.pageY - Math.floor($(window).height() / 2);
+			var rate = 0.07;
+			scroll_amount = Math.floor(delta * rate);
+			
+			my_debug(4, "scroll_amount: " + scroll_amount);
 		});
 	});
+	
+	function scroll_timer_func() {
+		/* up scrolling */
+		if( (scroll_amount > 0) && 
+			($('#collections').height() + $('#collections').position().top > $(window).height()) ) {
+				
+			$('#collections').animate({top:'-=' + scroll_amount}, 0);
+			my_debug(5, "going up, " + ($('#collections').height() + $('#collections').position().top) + ">" + $(window).height());
+			
+		/* down scrolling */
+		} else if ( (scroll_amount < 0) && ($('#collections').position().top < 0) ) {
+			my_debug(5, "going down");
+			$('#collections').animate({top:'-=' + scroll_amount}, 0);
+			
+		}
+		
+		/* adjust the top of the collections to 0 if top > 0 */
+		if($('#collections').position().top > 0) {
+			$('#collections').animate({top: 0}, 50);
+		}
+	}
+	
+	function my_debug(index, msg) {
+		$('#debug' + index).text(msg);
+	}
 	
 	/* 
 	 * To those unactive photosets div,
@@ -122,14 +166,6 @@ $(document).ready(function() {
 			activatePhotoset($(this).parent()));	
 	});
 	
-});
-
-/* 
- * Record the y position of the mouse
- * 
- *  */
-$(document).mousemove(function(e){
-	mouse_y = e.pageY;
 });
 
 /*
@@ -171,18 +207,19 @@ function activatePhotoset(div) {
 			//alert("JSON loaded");
 			$.each(data, function(index, node) {
 				//alert('going to build an <img>, id: ' + node.id);
-				var the_img = $('<img>', 
-					{
-						class: 'thumb-small', 
-						src: node.url_sq, 
-						style: 'display: inline;', 
-						alt: node.title
-					});
+				var the_img = $('<img>', {
+					class: 'thumb-small', 
+					src: node.url_sq, 
+					style: 'display: inline;', 
+					alt: node.title
+				});
 				the_img.data('photo_id', node.id);
 				the_img.hide(); // hide fot the coming animation
 				the_img.appendTo(the_thumbs_area);
 				// show the img with fade-in effect when loaded
-				the_img.bind("load", function () { $(this).fadeIn('slow'); });
+				the_img.bind("load", function() { 
+					$(this).fadeIn('slow').css('display', 'inline');
+				});
 				
 				/* remove the darkness of photoset-title-div, 
 				 * hide the loading icon */
@@ -199,7 +236,6 @@ function activatePhotoset(div) {
 		the_thumbs_area.slideDown(300);
 	}
 	
-	/*  */
 }
 
 /* 
@@ -207,7 +243,7 @@ function activatePhotoset(div) {
  * 
  * 1. Remove the class 'active' from the photoset-title-div
  * 2. Set the bg of the photoset-title-div
- * 3. slide up the thumbs area
+ * 3. slide up the thumbs area, and check if over-up-scrolled
  * 
  * Arguments:
  * The div is a jquery's DOM wrapper, 
@@ -221,5 +257,14 @@ function deactivatePhotoset(div) {
 	photoset_title_div.removeClass('active');
 	photoset_title_div.css('background-color', photoset_title_div.data('bg'));
 	
-	thumbs_area.slideUp(300);
+	thumbs_area.slideUp(300, function() {
+		/* Set collections' proper top position if over-up-scrolled */
+		if ( $('#collections').height() + $('#collections').position().top < $(window).height()) {
+			if($(window).height() - $('#collections').height() <= 0) {
+				$('#collections').animate({top: (($(window).height() - $('#collections').height())) }, 'fast');
+			} else {
+				$('#collections').animate({top: 0 }, 'fast');
+			}
+		}
+	});
 }

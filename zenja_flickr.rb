@@ -43,6 +43,10 @@ class ZenjaFlickr
     FlickRaw.url_c info
   end
 
+  def url_z(info)
+    FlickRaw.url_z info
+  end
+
   def test
     info = flickr.photos.getInfo :photo_id => '7559507782'
     list = flickr.photosets.getList :user_id => @@zenja_id
