@@ -2,12 +2,6 @@ require 'flickraw'
 require 'yaml'
 require 'json'
 
-class FlickRaw::ResponseList
-  def to_json
-    self.map { |r| r.to_hash }.to_json
-  end
-end
-
 class ZenjaFlickr
   @@flickr_yaml = YAML.load(File.open("./config/flickr.yaml"))
   @@zenja_id = @@flickr_yaml['app']['zenja_id']
@@ -18,17 +12,31 @@ class ZenjaFlickr
   end
 
   def photosets
-    # return type: Flickr::ResponseList
-    flickr.photosets.getList :user_id => @@zenja_id
+    response_list = flickr.photosets.getList :user_id => @@zenja_id
+
+    # return type: Array
+    response_list.map { |r| r.to_hash }
   end
 
   def photos_in_set(set_id)
-    response = flickr.photosets.getPhotos  :photoset_id => set_id, 
-                                :privacy_filter => 1, 
-                                :media => 'photos', 
-                                :extras => 'date_taken,url_sq'
-    # return type: Array!
-    response['photo']
+    response = flickr.photosets.getPhotos :photoset_id => set_id, 
+                                          :privacy_filter => 1, 
+                                          :media => 'photos', 
+                                          :extras => 'date_taken,url_sq'
+    # return type: Array of hashes
+    response['photo'].map { |r| r.to_hash }
+  end
+
+  def photo(photo_id)
+    # response's class: Flickr::Response
+    response = flickr.photos.getInfo :photo_id => photo_id
+    response_hash = response.to_hash
+
+    # add url_z
+    response_hash['url_z'] = url_z(response)
+
+    # return a hash
+    response_hash
   end
 
   def url_s(info)
@@ -72,5 +80,16 @@ puts zf.url_s(list['photo'][0])
 puts zf.url_c(list['photo'][0])
 puts zf.url(list['photo'][0])
 p flickr.urls.lookupUser :url => 'http://www.flickr.com/photos/gazkinz/sets/'
+=end
+
+=begin
+zf = ZenjaFlickr.new
+photo = zf.photo('4412059703')
+p photo.class
+puts
+puts photo
+puts
+puts photo['farm']
+puts photo.to_json
 =end
 

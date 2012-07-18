@@ -120,7 +120,66 @@ img.loading-icon {
 
 #display {
 	position: absolute;
+	margin-left: 350px;
+	height: 80%;
+	min-width: 55%;
+	left: 0;
+	top: 80px;
+	border: #000 1px dotted; /* for debug */
+	font-family: "Microsoft Yahei", "Helvetica Neue", "Luxi Sans", "DejaVu Sans", Georgia, Tahoma, "Hiragino Sans GB", STHeiti !important;
+	z-index: -1;
+}
+
+#display-img-div {
+	position: relative;
+	border: #000 1px dotted; /* for debug */
+	height: 75%;
+	width: 70%;
+	margin: 0 auto;
+	text-align: center;
+}
+
+#display-img {
+	max-height: 100%;
+	max-width: 100%;
+}
+
+#display-text-div {
+	border: #000 1px dotted; /* for debug */
+	width: 70%;
+	margin: 0 auto;
+	height: 25%;
+	overflow: hidden;
+}
+
+#display-title {
+	font-size: 25px;
+	margin: 15px 0 0 0;
+	color: #ddd;
+}
+
+#display-description {
+	font-size: 14px;
+	margin: 5px 0 0 0;
+	max-height: 40px;
+	overflow: hidden;
+	color: #999;
+}
+
+#loading-bar {
+	display: none;
+	position: absolute;
+}
+
+/**********************************************************************/
+
+#debug {
+	position: absolute;
 	left: 350px;
+	bottom: 0;
 	width: 500px;
-	border: #aaa 1px dotted; /* for debug */
+	border: #aaa 1px dotted;
+	
+	/* close debug */
+	display: none;
 }

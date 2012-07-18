@@ -18,8 +18,12 @@ end
 get '/service/photos_in_set' do
   content_type :json
   set_id = params["set_id"];
-  @zf.photos_in_set(set_id).map do |photo|
-    photo.to_hash
-  end.to_json
+  @zf.photos_in_set(set_id).to_json
+end
+
+get '/service/photo' do
+  content_type :json
+  photo_id = params["photo_id"]
+  @zf.photo(photo_id).to_hash.to_json
 end
 

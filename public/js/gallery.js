@@ -111,31 +111,6 @@ $(document).ready(function() {
 		});
 	});
 	
-	function scroll_timer_func() {
-		/* up scrolling */
-		if( (scroll_amount > 0) && 
-			($('#collections').height() + $('#collections').position().top > $(window).height()) ) {
-				
-			$('#collections').animate({top:'-=' + scroll_amount}, 0);
-			my_debug(5, "going up, " + ($('#collections').height() + $('#collections').position().top) + ">" + $(window).height());
-			
-		/* down scrolling */
-		} else if ( (scroll_amount < 0) && ($('#collections').position().top < 0) ) {
-			my_debug(5, "going down");
-			$('#collections').animate({top:'-=' + scroll_amount}, 0);
-			
-		}
-		
-		/* adjust the top of the collections to 0 if top > 0 */
-		if($('#collections').position().top > 0) {
-			$('#collections').animate({top: 0}, 50);
-		}
-	}
-	
-	function my_debug(index, msg) {
-		$('#debug' + index).text(msg);
-	}
-	
 	/* 
 	 * To those unactive photosets div,
 	 * add fade in/out effect when mouse hovering.
@@ -159,6 +134,11 @@ $(document).ready(function() {
 		$(this).fadeTo('fast', 0.5);
 	});
 	
+	/* The small thumbnail's click event */
+	$('#collections').on('click', '.thumb-small', function(event) {
+		displayPhoto($(this).data('photo_id'));
+	});
+	
 	/* And active/deactive to the photoset title */
 	$('#collections').on('click', '.photoset-title-div:not(.active)', function(event) {
 		//first deactivate then activate
@@ -167,6 +147,63 @@ $(document).ready(function() {
 	});
 	
 });
+
+function scroll_timer_func() {
+	/* up scrolling */
+	if( (scroll_amount > 0) && 
+		($('#collections').height() + $('#collections').position().top > $(window).height()) ) {
+			
+		$('#collections').animate({top:'-=' + scroll_amount}, 0);
+		my_debug(5, "going up, " + ($('#collections').height() + $('#collections').position().top) + ">" + $(window).height());
+		
+	/* down scrolling */
+	} else if ( (scroll_amount < 0) && ($('#collections').position().top < 0) ) {
+		my_debug(5, "going down");
+		$('#collections').animate({top:'-=' + scroll_amount}, 0);
+		
+	}
+	
+	/* adjust the top of the collections to 0 if top > 0 */
+	if($('#collections').position().top > 0) {
+		$('#collections').animate({top: 0}, 50);
+	}
+}
+
+function my_debug(index, msg) {
+	$('#debug' + index).text(msg);
+}
+
+function displayPhoto(photo_id) {
+	var display_img = $('#display-img');
+	var display_img_div = $('#display-img-div');
+	var display_text_div = $('#display-text-div');
+	var loading_bar = $('#loading-bar');
+	
+	// load image data based on photo_id
+	$.getJSON('/service/photo?photo_id=' + photo_id, function(data) {
+		display_img.attr('src', data.url_z);
+		$('#display-title').text(data.title);
+		$('#display-description').text(data.description);
+	});
+	
+	// after the img is loaded, hide the loading bar, show photo and text
+	display_img.bind("load", function() {
+		display_img.hide();
+		display_img.fadeIn('1000');
+		display_text_div.hide();
+		display_text_div.fadeIn('1000');
+		loading_bar.hide();
+	});
+	
+	// show the loading bar
+	loading_bar.show();
+	loading_bar.animate({
+		top: (display_img_div.height() - loading_bar.height())/2, 
+		left: (display_img_div.width() - loading_bar.width())/2
+	}, 0);
+	
+}
+
 
 /*
  * Activate a photoset div. Things to be done:
