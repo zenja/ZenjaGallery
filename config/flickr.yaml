@@ -1,5 +1,5 @@
 app:
   api_key: cef784bb23dfa3bab769dbc70cabfc1a
   shared_secret: d7a07d93e08b129b
-  zenja_id: 80258788@N00
-  zenja_id_true: 78766733@N06
+  zenja_id_for_test: 80258788@N00
+  zenja_id: 78766733@N06
