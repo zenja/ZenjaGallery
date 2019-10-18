@@ -5,7 +5,7 @@ GEM
     eventmachine (0.12.10)
     flickraw (0.9.6)
     json (1.7.3)
-    rack (1.4.1)
+    rack (1.6.11)
     rack-protection (1.2.0)
       rack
     sinatra (1.3.2)
