@@ -4,7 +4,7 @@ GEM
     daemons (1.1.8)
     eventmachine (0.12.10)
     flickraw (0.9.6)
-    json (1.7.3)
+    json (2.3.0)
     rack (1.4.1)
     rack-protection (1.2.0)
       rack
