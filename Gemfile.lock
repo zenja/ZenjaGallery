@@ -5,18 +5,22 @@ GEM
     eventmachine (0.12.10)
     flickraw (0.9.6)
     json (1.7.3)
-    rack (1.4.1)
-    rack-protection (1.2.0)
+    mustermann (1.1.1)
+      ruby2_keywords (~> 0.0.1)
+    rack (2.2.3)
+    rack-protection (2.2.0)
       rack
-    sinatra (1.3.2)
-      rack (~> 1.3, >= 1.3.6)
-      rack-protection (~> 1.2)
-      tilt (~> 1.3, >= 1.3.3)
+    ruby2_keywords (0.0.5)
+    sinatra (2.2.0)
+      mustermann (~> 1.0)
+      rack (~> 2.2)
+      rack-protection (= 2.2.0)
+      tilt (~> 2.0)
     thin (1.4.1)
       daemons (>= 1.0.9)
       eventmachine (>= 0.12.6)
       rack (>= 1.0.0)
-    tilt (1.3.3)
+    tilt (2.0.10)
 
 PLATFORMS
   ruby
@@ -24,5 +28,5 @@ PLATFORMS
 DEPENDENCIES
   flickraw (~> 0.9.6)
   json
-  sinatra (= 1.3.2)
+  sinatra (= 2.2.0)
   thin
